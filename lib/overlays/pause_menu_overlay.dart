@@ -9,42 +9,44 @@ class PauseMenuOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black.withValues(alpha: 0.75),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'JOC EN PAUSA',
-              style: TextStyle(
-                color: Colors.yellowAccent,
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 2,
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        color: Colors.black.withValues(alpha: 0.75),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'JOC EN PAUSA',
+                style: TextStyle(
+                  color: Colors.yellowAccent,
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 2,
+                  decoration: TextDecoration.none,
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            _PauseButton(
-              label: '▶ CONTINUAR',
-              color: Colors.greenAccent,
-              onTap: () => game.togglePause(),
-            ),
-            const SizedBox(height: 16),
-            _PauseButton(
-              label: '⚙ CONFIGURACIÓ',
-              color: Colors.orangeAccent,
-              onTap: () {
-                game.overlays.add('Settings');
-              },
-            ),
-            const SizedBox(height: 16),
-            _PauseButton(
-              label: '🏠 MENÚ PRINCIPAL',
-              color: Colors.redAccent,
-              onTap: () => game.returnToMenu(),
-            ),
-          ],
+              const SizedBox(height: 40),
+              _PauseButton(
+                label: '▶ CONTINUAR',
+                color: Colors.greenAccent,
+                onTap: () => game.togglePause(),
+              ),
+              const SizedBox(height: 16),
+              _PauseButton(
+                label: '⚙ CONFIGURACIÓ',
+                color: Colors.orangeAccent,
+                onTap: () => game.overlays.add('Settings'),
+              ),
+              const SizedBox(height: 16),
+              _PauseButton(
+                label: '🏠 MENÚ PRINCIPAL',
+                color: Colors.redAccent,
+                onTap: () => game.returnToMenu(),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -56,7 +58,8 @@ class _PauseButton extends StatelessWidget {
   final Color color;
   final VoidCallback onTap;
 
-  const _PauseButton({required this.label, required this.color, required this.onTap});
+  const _PauseButton(
+      {required this.label, required this.color, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +72,10 @@ class _PauseButton extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
-      child: Text(label,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+      child: Text(
+        label,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

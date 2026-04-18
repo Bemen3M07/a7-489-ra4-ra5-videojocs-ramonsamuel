@@ -8,12 +8,10 @@ import 'bullet.dart';
 // 4b3: PositionComponent proporciona position, size, scale, angle, anchor (visibility via isVisible)
 class Player extends PositionComponent with HasGameReference<SpaceShooterGame> {
   late SpawnComponent _bulletSpawner;
+  bool _isShooting = false;
 
   // 4b3: visibility - controla si el component es renderitza
   bool isVisible = true;
-
-  // 4b3: scale - factor d'escala del component
-  // (accessible via inherited scale property de PositionComponent)
 
   Player() : super(anchor: Anchor.center);
 
@@ -46,8 +44,19 @@ class Player extends PositionComponent with HasGameReference<SpaceShooterGame> {
     position.y = position.y.clamp(height / 2, game.size.y - height / 2);
   }
 
-  void startShooting() => _bulletSpawner.timer.start();
-  void stopShooting() => _bulletSpawner.timer.stop();
+  void startShooting() {
+    if (!_isShooting) {
+      _isShooting = true;
+      _bulletSpawner.timer.start();
+    }
+  }
+
+  void stopShooting() {
+    if (_isShooting) {
+      _isShooting = false;
+      _bulletSpawner.timer.stop();
+    }
+  }
 
   // 4b2: render - dibuixa el gorilla al Canvas a cada frame
   @override
