@@ -1,41 +1,93 @@
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'game/space_shooter_game.dart';
+import 'overlays/main_menu_overlay.dart';
+import 'overlays/level_selector_overlay.dart';
+import 'overlays/settings_overlay.dart';
+import 'overlays/pause_menu_overlay.dart';
+import 'overlays/game_over_overlay.dart';
+import 'overlays/hud_overlay.dart';
 
 void main() {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const GorillesApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class GorillesApp extends StatelessWidget {
+  const GorillesApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Hello World',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+      title: 'Gorilles i Platans',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData.dark(),
+      home: const _GameScreen(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({super.key});
+class _GameScreen extends StatefulWidget {
+  const _GameScreen();
+
+  @override
+  State<_GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<_GameScreen> {
+  // Una sola instància del joc per tota la sessió
+  final SpaceShooterGame _game = SpaceShooterGame();
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Hello World'),
-      ),
-      body: const Center(
-        child: Text(
-          'Hello World!',
-          style: TextStyle(fontSize: 24),
+    // 4b1: GameWidget connecta el joc Flame amb l'arbre de widgets de Flutter
+    return GameWidget<SpaceShooterGame>(
+      game: _game,
+
+      // 4b8: loadingBuilder - es mostra mentre es carreguen els assets
+      loadingBuilder: (context) => const Scaffold(
+        backgroundColor: Color(0xFF0A1A0A),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: Colors.greenAccent),
+              SizedBox(height: 20),
+              Text(
+                'Carregant Gorilles i Plàtans...',
+                style: TextStyle(color: Colors.greenAccent, fontSize: 16),
+              ),
+            ],
+          ),
         ),
       ),
+
+      // 4b8: backgroundBuilder - fons Flutter (sota el canvas del joc)
+      backgroundBuilder: (context) => Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF061206), // verd jungla fosc
+              Color(0xFF020802),
+            ],
+          ),
+        ),
+      ),
+
+      // 4b8: overlayBuilderMap - mapa de totes les pantalles Flutter sobre el joc
+      overlayBuilderMap: {
+        'MainMenu': (context, game) => MainMenuOverlay(game: game),
+        'LevelSelector': (context, game) => LevelSelectorOverlay(game: game),
+        'Settings': (context, game) => SettingsOverlay(game: game),
+        'PauseMenu': (context, game) => PauseMenuOverlay(game: game),
+        'GameOver': (context, game) => GameOverOverlay(game: game),
+        'HUD': (context, game) => HudOverlay(game: game),
+      },
+
+      // Overlay inicial: menú principal
+      initialActiveOverlays: const ['MainMenu'],
     );
   }
 }
